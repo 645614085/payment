@@ -68,9 +68,13 @@ class HttpClient {
      */
     public function exec(){
 
-        curl_setopt($this->conn, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($this->conn, CURLOPT_RETURNTRANSFER, true);//要求结果为字符串且输出到屏幕上
 
-        curl_setopt($this->conn, CURLOPT_URL, $this->url);
+        if (strtolower($this->method!='post')){
+            curl_setopt($this->conn, CURLOPT_URL, $this->url.'?'.$this->requestBody);
+        }else{
+            curl_setopt($this->conn, CURLOPT_URL, $this->url);
+        }
 
         /**
          * 设置请求方式
@@ -94,16 +98,16 @@ class HttpClient {
             curl_setopt($this->conn, CURLOPT_HTTPHEADER, $this->headers);
         }
 
-        curl_setopt($this->conn, CURLOPT_HEADER, true);
+        curl_setopt($this->conn, CURLOPT_HEADER, true); //是否response
 
 
-        $result = curl_exec($this->conn);
+        $response = curl_exec($this->conn);
 
         if ($error = curl_error($this->conn)){
             throw new HttpClientException("请求失败：".$error,HttpClientException::REQUEST_FAILED);
         }
 
-        return json_decode($result,true);
+        return $response;
     }
 
     /**
@@ -114,7 +118,8 @@ class HttpClient {
     }
 
     /**
-     * @param mixed $conn
+     * @param $conn
+     * @return $this
      */
     public function setConn($conn) {
         $this->conn = $conn;
@@ -129,7 +134,9 @@ class HttpClient {
     }
 
     /**
-     * @param mixed $headers
+     * @param array $headers
+     * @return $this
+     *
      */
     public function setHeaders(array $headers) {
         $this->headers = $headers;
@@ -149,7 +156,9 @@ class HttpClient {
     }
 
     /**
-     * @param mixed $url
+     * @param $url
+     * @return $this
+     *
      */
     public function setUrl($url) {
         $this->url = $url;
@@ -167,8 +176,12 @@ class HttpClient {
      * @param $requestBody
      * @return $this
      */
-    public function setRequestBody($requestBody) {
-        $this->requestBody = $requestBody;
+    public function setRequestBody(array $requestBody) {
+        $this->requestBody = '';
+        foreach ($requestBody as $key=>$value){
+            $this->requestBody .= '&'.$key.'='.urlencode($value);
+        }
+        $this->requestBody = ltrim($this->requestBody,'&');
         return $this;
     }
 
