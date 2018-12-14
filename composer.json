@@ -1,0 +1,17 @@
+{
+    "name": "zzt/payment",
+    "description": "聚合支付",
+    "authors": [
+        {
+            "name": "zhangzetao",
+            "email": "645614085@qq.com"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {},
+	 "autoload": {
+        "psr-4": {
+            "ZZT\\Payment\\": ["src"]
+        }
+    }
+}
