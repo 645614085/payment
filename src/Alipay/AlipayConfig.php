@@ -20,8 +20,8 @@ class AlipayConfig
     private $notifyUrl;
     private $returnUrl;
     private $appAuthToken;
-    private $sandBox = false;
-    private $version = '1.0';
+    private $sandBox ;
+    private $version ;
     private $timestamp;
     private $charset;
 
@@ -35,7 +35,9 @@ class AlipayConfig
         $returnUrl,
         $appAuthToken,
         $timestamp = null,
-        $charset = 'utf-8'
+        $charset = 'utf-8',
+        $version = '1.0',
+        $sandBox = false
     )
     {
         $this->appId = $appId;
@@ -47,6 +49,8 @@ class AlipayConfig
         $this->appAuthToken = $appAuthToken;
         $this->timestamp = $timestamp ?: date("Y-m-d H:i:s");
         $this->charset = $charset;
+        $this->sandBox = $sandBox;
+        $this->version = $version;
     }
 
 
