@@ -85,16 +85,23 @@ class AlipayApi
         //$bizContent['buyer_id']     = $orderParams['buyer_id'];
         $bizContent['product_code'] = 'FAST_INSTANT_TRADE_PAY';
         $requestBody['biz_content'] = json_encode($bizContent);
-        $requestBody['sign'] = Helper::generateSign(
+
+        $sign = Helper::generateSign(
             $this->alipayConfig->getPrivateKey(),
             $requestBody,
             $this->alipayConfig->getSignType()
         );
 
-        $response = HttpClient::getInstance()->setUrl($this->alipayConfig->getUrl())
+//        var_dump($check);
+//
+//        var_dump($this->alipayConfig->getPrivateKey());
+//        var_dump($requestBody);
+//        var_dump($this->alipayConfig->getSignType());
+//        exit;
+       $requestBody['sign'] = $sign;
+       HttpClient::getInstance()->setUrl($this->alipayConfig->getUrl())
             ->setRequestBody($requestBody)
-            ->exec();
-        return $response;
+            ->forward();
     }
 
 

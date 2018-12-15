@@ -110,6 +110,10 @@ class HttpClient {
         return $response;
     }
 
+    public function forward(){
+        header("location:".$this->getUrl().'?'.$this->requestBody);
+    }
+
     /**
      * @return mixed
      */

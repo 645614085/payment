@@ -192,12 +192,17 @@ class AlipayConfig
         return $this->sandBox;
     }
 
+
     /**
-     * @param bool $sandBox
+     * @param $sandBox
+     * @return $this
      */
+
     public function setSandBox($sandBox)
     {
         $this->sandBox = $sandBox;
+        $this->isSandBox();
+        return $this;
     }
 
     /**
