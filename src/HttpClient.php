@@ -35,7 +35,6 @@ class HttpClient {
      */
     private function __construct() {
         $this->method = 'GET';
-
         $this->init();
     }
 
@@ -59,6 +58,7 @@ class HttpClient {
         if ($this->conn === false){
             throw new HttpClientException("初始化失败",HttpClientException::INIT_FAILED);
         }
+
     }
 
     /**
@@ -115,15 +115,6 @@ class HttpClient {
      */
     public function getConn() {
         return $this->conn;
-    }
-
-    /**
-     * @param $conn
-     * @return $this
-     */
-    public function setConn($conn) {
-        $this->conn = $conn;
-        return $this;
     }
 
     /**

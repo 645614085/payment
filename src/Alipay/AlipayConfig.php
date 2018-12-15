@@ -24,6 +24,7 @@ class AlipayConfig
     private $version ;
     private $timestamp;
     private $charset;
+    private $url;
 
 
     public function __construct(
@@ -31,9 +32,9 @@ class AlipayConfig
         $privateKey,
         $publicKey,
         $signType,
-        $notifyUrl,
-        $returnUrl,
-        $appAuthToken,
+        $notifyUrl = null,
+        $returnUrl = null,
+        $appAuthToken = null,
         $timestamp = null,
         $charset = 'utf-8',
         $version = '1.0',
@@ -51,6 +52,7 @@ class AlipayConfig
         $this->charset = $charset;
         $this->sandBox = $sandBox;
         $this->version = $version;
+        $this->isSandBox();
     }
 
 
@@ -182,6 +184,11 @@ class AlipayConfig
      */
     public function isSandBox()
     {
+        if ($this->sandBox){
+            $this->url = 'https://openapi.alipaydev.com/gateway.do';
+        }else{
+            $this->url = 'https://openapi.alipay.com/gateway.do';
+        }
         return $this->sandBox;
     }
 
@@ -235,6 +242,22 @@ class AlipayConfig
     public function getVersion()
     {
         return $this->version;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getUrl()
+    {
+        return $this->url;
+    }
+
+    /**
+     * @param mixed $url
+     */
+    public function setUrl($url)
+    {
+        $this->url = $url;
     }
 
 

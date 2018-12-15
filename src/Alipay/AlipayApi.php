@@ -17,7 +17,7 @@ class AlipayApi
 {
     private $alipayConfig;
 
-    private $url;//接口地址
+    private $method;//接口地址
 
     private $requestBaseBody;
 
@@ -53,20 +53,14 @@ class AlipayApi
         if (empty($this->alipayConfig->getSignType())){
             throw new AlipayException("appId不能为null",AlipayException::ALIPAY_EXCEPTION);
         }
-
-        if ($this->alipayConfig->isSandBox()){//沙箱环境
-            $this->url = 'https://openapi.alipaydev.com/gateway.do';
-        }else{//正式环境
-            $this->url = 'https://openapi.alipay.com/gateway.do';
-        }
-
     }
 
     //设置支付宝的支付请求
-    private function setRequestBaseBody(){
+    private function setRequestBaseBody($method){
+        $this->method = $method;
         return array_filter([
             'app_id'    =>      $this->alipayConfig->getAppId(),
-            'method'    =>      $this->url,
+            'method'    =>      $this->method,
             'charset'   =>      $this->alipayConfig->getCharset(),
             'sign_type' =>      $this->alipayConfig->getSignType(),
             'timestamp' =>      $this->alipayConfig->getTimestamp(),
@@ -76,25 +70,31 @@ class AlipayApi
         ]);
     }
 
-    //创建订单
+    /**
+     * @param $orderParams
+     * @return mixed
+     * @throws AlipayException
+     * @throws \ZZT\Payment\Exception\HttpClientException
+     *
+     */
     public function createOrder($orderParams){
-        $requestBody  =  $this->setRequestBaseBody();
+        $requestBody  =  $this->setRequestBaseBody('alipay.trade.page.pay');
         $bizContent['out_trade_no'] = $orderParams['out_trade_no'];
-        $bizContent['scene']        = $orderParams['scene'];
-        $bizContent['auth_code']    = $orderParams['auth_code'];
         $bizContent['subject']      = $orderParams['subject'];
         $bizContent['total_amount'] = $orderParams['total_amount'];
-        $requestBody['biz_content'] = json_encode($orderParams);
+        //$bizContent['buyer_id']     = $orderParams['buyer_id'];
+        $bizContent['product_code'] = 'FAST_INSTANT_TRADE_PAY';
+        $requestBody['biz_content'] = json_encode($bizContent);
         $requestBody['sign'] = Helper::generateSign(
             $this->alipayConfig->getPrivateKey(),
             $requestBody,
             $this->alipayConfig->getSignType()
         );
 
-        $response = HttpClient::getInstance()->setConn($this->url)
+        $response = HttpClient::getInstance()->setUrl($this->alipayConfig->getUrl())
             ->setRequestBody($requestBody)
             ->exec();
-        var_dump($response);
+        return $response;
     }
 
 
